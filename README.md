@@ -12,11 +12,14 @@
         * [Database](#Database)
         * [Configuation](#Configuation)
     * [Cryptography instruction](#Cryptography-instruction)
- 
- 
+
 ## 中文
 
 链记API
+
+链记小程序安装：
+
+![](assets/mp_qr.jpg)
 
 ### 部署说明
 
@@ -65,6 +68,10 @@ note.ma.note.secret=
 ## English
 
 Chain diary API
+
+Install chain diary mini program：
+
+![](assets/mp_qr.jpg)
 
 ### Deploying instruction
 
