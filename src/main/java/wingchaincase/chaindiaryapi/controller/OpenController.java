@@ -50,7 +50,11 @@ public class OpenController {
 
         String weixinUnionId = getWeixinUnionId(requestVO);
 
-        NoteSeed noteSeed = noteService.noteSeedRepository.findByWeixinUnionId(weixinUnionId);
+        logger.info("weixinUnionId: {}", weixinUnionId);
+
+        NoteSeed noteSeed = noteService.getNoteSeedRepository().findByWeixinUnionId(weixinUnionId);
+
+        Boolean isNew = false;
 
         if (noteSeed == null) {
             byte[] entropy = noteService.generateEntropy();
@@ -61,15 +65,18 @@ public class OpenController {
             noteSeed.setWeixinUnionId(weixinUnionId);
             noteSeed.setSeed(seedEncHex);
 
-            noteService.noteSeedRepository.save(noteSeed);
+            noteService.getNoteSeedRepository().save(noteSeed);
+
+            isNew = true;
         }
 
         String seedEncHex = noteSeed.getSeed();
         String seedHex = blackholeService.decryptSafe(seedEncHex);
-        seedEncHex = EcService.eciesEncrypt(requestVO.getSeedPublicKeyHex(), seedHex);
+        seedEncHex = EcService.eciesEncryptSafe(requestVO.getSeedPublicKeyHex(), seedHex);
 
         InitResponseVO responseVO = new InitResponseVO();
         responseVO.setSeedEncHex(seedEncHex);
+        responseVO.setIsNew(isNew);
 
         return responseVO;
 
@@ -77,7 +84,6 @@ public class OpenController {
 
     @ApiOperation("执行操作")
     @RequestMapping(value = {"/call"}, method = RequestMethod.POST)
-    @Transactional(rollbackFor = Exception.class)
     public Object call(@RequestBody CallRequestVO requestVO) throws BaseBadRequestException, BaseInternalServerErrorException {
 
         String txHex = requestVO.getTxHex();
@@ -146,6 +152,11 @@ public class OpenController {
         }
 
         String weixinUnionId = (String) userInfo.get("unionId");
+
+        if (weixinUnionId == null) {
+            logger.error("get weixinUnionId error");
+            throw new BaseBadRequestException("get weixinUnionId error");
+        }
 
         return weixinUnionId;
     }

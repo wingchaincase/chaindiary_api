@@ -1,39 +1,16 @@
 package wingchaincase.chaindiaryapi.service;
 
-import io.github.novacrypto.bip39.Words;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import wingchaincase.chaindiaryapi.domain.Note;
-import wingchaincase.chaindiaryapi.domain.NoteAttachment;
-import wingchaincase.chaindiaryapi.domain.vo.NoteAttachmentVO;
-import wingchaincase.chaindiaryapi.domain.vo.NoteVO;
-import wingchaincase.chaindiaryapi.domain.vo.PageVO;
 import wingchaincase.chaindiaryapi.exception.BaseBadRequestException;
-import wingchaincase.chaindiaryapi.exception.BaseException;
-import wingchaincase.chaindiaryapi.repository.NoteAttachmentRepository;
-import wingchaincase.chaindiaryapi.repository.NoteRepository;
-import wingchaincase.chaindiaryapi.repository.NoteSeedRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class EcService {

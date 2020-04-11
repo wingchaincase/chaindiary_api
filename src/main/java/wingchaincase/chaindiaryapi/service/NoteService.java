@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import wingchaincase.chaindiaryapi.domain.Note;
 import wingchaincase.chaindiaryapi.domain.NoteAttachment;
 import wingchaincase.chaindiaryapi.domain.vo.NoteAttachmentVO;
@@ -21,7 +22,6 @@ import wingchaincase.chaindiaryapi.repository.NoteAttachmentRepository;
 import wingchaincase.chaindiaryapi.repository.NoteRepository;
 import wingchaincase.chaindiaryapi.repository.NoteSeedRepository;
 
-import javax.annotation.PostConstruct;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
@@ -59,13 +59,21 @@ public class NoteService {
     private NoteResourceService noteResourceService;
 
     @Autowired
-    public NoteSeedRepository noteSeedRepository;
+    private NoteSeedRepository noteSeedRepository;
 
     @Autowired
-    public NoteRepository noteRepository;
+    private NoteRepository noteRepository;
 
     @Autowired
-    public NoteAttachmentRepository noteAttachmentRepository;
+    private NoteAttachmentRepository noteAttachmentRepository;
+
+    public NoteSeedRepository getNoteSeedRepository() {
+        return noteSeedRepository;
+    }
+
+    public void setNoteSeedRepository(NoteSeedRepository noteSeedRepository) {
+        this.noteSeedRepository = noteSeedRepository;
+    }
 
     public byte[] generateEntropy() {
         byte[] entropy = new byte[Words.TWELVE.byteLength()];
@@ -239,6 +247,7 @@ public class NoteService {
         return pageVO;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Object callCreate(String address, Map<String, String> params, String blobHex) throws BaseBadRequestException {
 
         String nonceHex = params.get("nonceHex");
@@ -275,6 +284,7 @@ public class NoteService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Object callUpdate(String address, Map<String, String> params, String blobHex) throws BaseBadRequestException {
 
         String nonceHex = params.get("nonceHex");
@@ -320,6 +330,7 @@ public class NoteService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Object callDelete(String address, Map<String, String> params, String blobHex) throws BaseBadRequestException {
 
         String nonceHex = params.get("nonceHex");
@@ -344,6 +355,7 @@ public class NoteService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Object callCreateAttachment(String address, Map<String, String> params, String blobHex) throws BaseBadRequestException {
 
         String nonceHex = params.get("nonceHex");
@@ -386,7 +398,7 @@ public class NoteService {
 
         String resource = getResource(address, encHashHex);
 
-        return new LinkedHashMap<String, Object>(){{
+        return new LinkedHashMap<String, Object>() {{
             put("resourceEnc", resource);
         }};
     }
